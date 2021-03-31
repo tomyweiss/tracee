@@ -88,7 +88,7 @@ func InitKernelConfig(k KernelConfig) (KernelConfig, error) {
 func (k KernelConfig) GetKernelConfigValue(key string) (string, error) {
 	v, exists := k[key]
 	if !exists {
-		return "", errors.New("kernel config value does not exist, it is could not be known by your kernel version")
+		return "", errors.New("kernel config value does not exist, it's possible this option is not present in your kernel version or the KernelConfig has not been initialized")
 	}
 	return v, nil
 }
