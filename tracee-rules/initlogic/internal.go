@@ -16,7 +16,7 @@ func InitPackageMode() (chan external.Event, error) {
 	inputData := model.Input{
 		RulesDir:           "",
 		Rules:              nil,
-		Tracee:             []string{"goChannel"},
+		Tracee:             []string{"goChannel:test"},
 		Webhook:            "",
 		WebhookTemplate:    "",
 		WebhookContentType: "",
@@ -28,10 +28,10 @@ func InitPackageMode() (chan external.Event, error) {
 	return o.ProducerChannel, err
 }
 
-func InitTraceeRules(c model.Input) (*input.TraceeInputOptions, error) {
+func InitTraceeRules(c model.Input) (input.TraceeInputOptions, error) {
 	sigs, err := signature.GetSignatures(c.RulesDir, c.Rules)
 	if err != nil {
-		return nil, err
+		return input.TraceeInputOptions{}, err
 	}
 
 	var loadedSigIDs []string
@@ -47,32 +47,32 @@ func InitTraceeRules(c model.Input) (*input.TraceeInputOptions, error) {
 	fmt.Println("Loaded signature(s): ", loadedSigIDs)
 
 	if c.List {
-		return nil, signature.ListSigs(os.Stdout, sigs)
+		return input.TraceeInputOptions{}, signature.ListSigs(os.Stdout, sigs)
 	}
 
 	var inputs engine.EventSources
 	opts, err := input.ParseTraceeInputOptions(c.Tracee)
 	if err == input.ErrHelp {
 		input.PrintHelp()
-		return nil, nil
+		return input.TraceeInputOptions{}, nil
 	}
 	if err != nil {
-		return nil, err
+		return input.TraceeInputOptions{}, err
 	}
 	inputs.Tracee, err = input.SetupTraceeInputSource(opts)
 	if err != nil {
-		return nil, err
+		return input.TraceeInputOptions{}, err
 	}
 
 	if inputs == (engine.EventSources{}) {
-		return nil, err
+		return input.TraceeInputOptions{}, err
 	}
 
 	output, err := output.SetupOutput(os.Stdout, c.Webhook, c.WebhookTemplate, c.WebhookContentType, c.OutputTemplate)
 	if err != nil {
-		return nil, err
+		return input.TraceeInputOptions{}, err
 	}
 	e := engine.NewEngine(sigs, inputs, output, os.Stderr)
 	e.Start(signature.SigHandler())
-	return opts, nil
+	return *opts, nil
 }
