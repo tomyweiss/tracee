@@ -1,4 +1,4 @@
-package signature
+package main
 
 import (
 	_ "embed"
@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 	"plugin"
 
-	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/rego/regosig"
+	"github.com/aquasecurity/tracee/tracee-rules/signatures/rego/regosig"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 

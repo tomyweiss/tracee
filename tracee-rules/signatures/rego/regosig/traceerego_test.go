@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
-	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/signaturestest"
+	"github.com/aquasecurity/tracee/tracee-rules/signature/signaturestest"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 

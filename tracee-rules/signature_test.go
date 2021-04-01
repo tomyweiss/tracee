@@ -1,4 +1,4 @@
-package signature
+package main
 
 import (
 	"encoding/json"

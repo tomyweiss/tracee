@@ -5,7 +5,7 @@ import (
 
 	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 
-	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/signaturestest"
+	"github.com/aquasecurity/tracee/tracee-rules/signatures/signaturestest"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
