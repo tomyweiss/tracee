@@ -23,8 +23,7 @@ func InitPackageMode() (chan external.Event, error) {
 }
 
 func InitTraceeRules(c model.Input) (*input.TraceeInputOptions, error) {
-	return nil, nil
-	//sigs, err := main.GetSignatures(c.RulesDir, c.Rules)
+	//sigs, err := GetSignatures(c.RulesDir, c.Rules)
 	//if err != nil {
 	//	return nil, err
 	//}
@@ -42,7 +41,7 @@ func InitTraceeRules(c model.Input) (*input.TraceeInputOptions, error) {
 	//fmt.Println("Loaded signature(s): ", loadedSigIDs)
 	//
 	//if c.List {
-	//	return nil, main.ListSigs(os.Stdout, sigs)
+	//	return nil, ListSigs(os.Stdout, sigs)
 	//}
 	//
 	//var inputs engine.EventSources
@@ -68,6 +67,7 @@ func InitTraceeRules(c model.Input) (*input.TraceeInputOptions, error) {
 	//	return nil, err
 	//}
 	//e := engine.NewEngine(sigs, inputs, output, os.Stderr)
-	//e.Start(main.SigHandler())
+	//e.Start(SigHandler())
 	//return opts, nil
+	return nil, nil
 }
