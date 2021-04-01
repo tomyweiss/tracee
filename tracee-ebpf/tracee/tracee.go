@@ -18,6 +18,7 @@ import (
 	bpf "github.com/aquasecurity/tracee/libbpfgo"
 	"github.com/aquasecurity/tracee/libbpfgo/helpers"
 	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
+	"github.com/aquasecurity/tracee/tracee-rules/rules"
 )
 
 // Config is a struct containing user defined configuration of tracee
@@ -194,6 +195,7 @@ type Tracee struct {
 	EncParamName      [2]map[string]argTag
 	pidsInMntns       bucketsCache //record the first n PIDs (host) in each mount namespace, for internal usage
 	StackAddressesMap *bpf.BPFMap
+	Producer          external.Event
 }
 
 type counter int32
@@ -338,6 +340,7 @@ func New(cfg Config) (*Tracee, error) {
 	}
 	t.StackAddressesMap = StackAddressesMap
 
+	t.Producer = rules.TraceeRules()
 	return t, nil
 }
 

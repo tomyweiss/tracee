@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/aquasecurity/tracee/tracee-rules/signatures"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 
 	"github.com/aquasecurity/tracee/tracee-rules/engine"
@@ -38,7 +39,7 @@ func main() {
 				return errors.New("no flags specified")
 			}
 
-			sigs, err := getSignatures(c.String("rules-dir"), c.StringSlice("rules"))
+			sigs, err := signatures.GetSignatures(c.String("rules-dir"), c.StringSlice("rules"))
 			if err != nil {
 				return err
 			}

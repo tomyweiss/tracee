@@ -1,23 +1,19 @@
-package main
+package signatures
 
 import (
-	_ "embed"
-
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"plugin"
 
 	"github.com/aquasecurity/tracee/tracee-rules/signatures/rego/regosig"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-//go:embed signatures/rego/helpers.rego
-var regoHelpersCode string
+var regoHelpersCode = "package tracee.helpers\n\nget_tracee_argument(arg_name) = res {\n    arg := input.args[_]\n    arg.name == arg_name\n    res := arg.value\n}\n\n\ndefault is_file_write(flags) = false\nis_file_write(flags) {\n    contains(lower(flags), \"o_wronly\")\n}\nis_file_write(flags) {\n    contains(lower(flags), \"o_rdwr\")\n}"
 
-func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
+func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 	if rulesDir == "" {
 		exePath, err := os.Executable()
 		if err != nil {
@@ -50,29 +46,30 @@ func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 }
 
 func findGoSigs(dir string) ([]types.Signature, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return nil, fmt.Errorf("error reading plugins directory %s: %v", dir, err)
-	}
-	var res []types.Signature
-	for _, file := range files {
-		if filepath.Ext(file.Name()) != ".so" {
-			continue
-		}
-		p, err := plugin.Open(filepath.Join(dir, file.Name()))
-		if err != nil {
-			log.Printf("error opening plugin %s: %v", file.Name(), err)
-			continue
-		}
-		export, err := p.Lookup("ExportedSignatures")
-		if err != nil {
-			log.Printf("missing Export symbol in plugin %s", file.Name())
-			continue
-		}
-		sigs := *export.(*[]types.Signature)
-		res = append(res, sigs...)
-	}
-	return res, nil
+	//files, err := ioutil.ReadDir(dir)
+	//if err != nil {
+	//	return nil, fmt.Errorf("error reading plugins directory %s: %v", dir, err)
+	//}
+	//var res []types.Signature
+	//for _, file := range files {
+	//	if filepath.Ext(file.Name()) != ".so" {
+	//		continue
+	//	}
+	//	p, err := plugin.Open(filepath.Join(dir, file.Name()))
+	//	if err != nil {
+	//		log.Printf("error opening plugin %s: %v", file.Name(), err)
+	//		continue
+	//	}
+	//	export, err := p.Lookup("ExportedSignatures")
+	//	if err != nil {
+	//		log.Printf("missing Export symbol in plugin %s", file.Name())
+	//		continue
+	//	}
+	//	sigs := *export.(*[]types.Signature)
+	//	res = append(res, sigs...)
+	//}
+	//return res, nil
+	return nil, nil
 }
 
 func findRegoSigs(dir string) ([]types.Signature, error) {
@@ -95,7 +92,7 @@ func findRegoSigs(dir string) ([]types.Signature, error) {
 			log.Printf("error reading file %s/%s: %v", dir, file, err)
 			continue
 		}
-		sig, err := regosig.NewRegoSignature(string(regoCode), regoHelpersCode)
+		sig, err := regosig.NewRegoSignature(string(regoCode), "")
 		if err != nil {
 			log.Printf("error creating rego signature with: %s: %v ", regoCode[0:20], err)
 			continue
