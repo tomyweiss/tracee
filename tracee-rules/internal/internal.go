@@ -12,7 +12,7 @@ import (
 	"github.com/aquasecurity/tracee/tracee-rules/signature"
 )
 
-func InitPackageMode(inputChan chan []byte) (chan external.Event, error) {
+func InitPackageMode() (chan external.Event, error) {
 	inputData := model.Input{
 		RulesDir:           "",
 		Rules:              nil,

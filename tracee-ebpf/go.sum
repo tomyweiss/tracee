@@ -25,8 +25,6 @@ github.com/aquasecurity/tracee/libbpfgo v0.0.0-20210115081842-487d1e44fcda/go.mo
 github.com/aquasecurity/tracee/libbpfgo v0.0.0-20210318031738-f66f7bedda26 h1:zYdDoWECtiUcSauPlzmMnG6gl60bw0UBO+6SMr5NP9I=
 github.com/aquasecurity/tracee/libbpfgo v0.0.0-20210318031738-f66f7bedda26/go.mod h1:QOC4P8cpqRHX0E3kniWORQCYv1/2n92LdEI5I6yX2no=
 github.com/aquasecurity/tracee/tracee-ebpf v0.0.0-20210217124138-0575cb7b157d/go.mod h1:2hx4/WyixWannTcEJEF9Pe9UO5WGrusAyDJIaJ7mmDA=
-github.com/aquasecurity/tracee/tracee-rules v0.0.0-20210331213835-7862e0e60d87 h1:aX6q1hpxB5kmZ78ygYd21UOmGumwwIj1NWpOaLwf3RI=
-github.com/aquasecurity/tracee/tracee-rules v0.0.0-20210331213835-7862e0e60d87/go.mod h1:BVb+BPxY7BYdUuKxtlindLHiyDXuILxuY1QSx8H2vDY=
 github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e/go.mod h1:3U/XgcO3hCbHZ8TKRvWD2dDTCfh9M9ya+I9JpbB7O8o=
 github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da/go.mod h1:Q73ZrmVTwzkszR9V5SSuryQ31EELlFMUz1kKyl939pY=
 github.com/armon/go-radix v0.0.0-20180808171621-7fddfc383310/go.mod h1:ufUuZ+zHj4x4TnLV4JWEpy2hxWSpsRywHrMgIH9cCH8=
@@ -293,6 +291,8 @@ github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2 h1:b6uOv7YOFK0TYG7HtkIgExQo+2RdLuwRft63jn2HWj8=
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
+github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1 h1:fSBuUpPWnDNVewZbD/MiOSos+eXzRjRNrWycq8WLKd0=
+github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1/go.mod h1:BVb+BPxY7BYdUuKxtlindLHiyDXuILxuY1QSx8H2vDY=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1 h1:+mkCCcOFKPnCmVYVcURKps1Xe+3zP90gSYGNfRkjoIY=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
