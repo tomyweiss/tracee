@@ -193,6 +193,7 @@ func (t *Tracee) printEvent(done <-chan struct{}, in <-chan external.Event) (<-c
 	go func() {
 		defer close(errc)
 		for printEvent := range in {
+			//fmt.Println("got a new event")
 			t.stats.eventCounter.Increment()
 			t.printer.Print(printEvent)
 		}

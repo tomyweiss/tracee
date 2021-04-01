@@ -220,6 +220,7 @@ type statsStore struct {
 
 // New creates a new Tracee instance based on a given valid Config
 func New(cfg Config) (*Tracee, error) {
+	fmt.Println("new")
 	var err error
 
 	err = cfg.Validate()
@@ -271,6 +272,7 @@ func New(cfg Config) (*Tracee, error) {
 		}
 	}
 
+	fmt.Println("c, err := initlogic.InitPackageMode()")
 	c, err := initlogic.InitPackageMode()
 	if err != nil {
 		return nil, err

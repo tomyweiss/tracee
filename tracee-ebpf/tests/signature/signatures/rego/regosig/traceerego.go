@@ -133,11 +133,12 @@ func (sig *RegoSignature) getSelectedEvents(pkgName string) ([]types.SignatureEv
 // if bool is "returned", a true evaluation will generate a Finding with no data
 // if document is "returned", any non-empty evaluation will generate a Finding with the document as the Finding's "Data"
 func (sig *RegoSignature) OnEvent(e types.Event) error {
+
 	ee, ok := e.(tracee.Event)
 	if !ok {
 		return fmt.Errorf("invalid event")
 	}
-
+	fmt.Println(ee)
 	results, err := sig.matchPQ.Eval(context.TODO(), rego.EvalInput(ee))
 	if err != nil {
 		return err

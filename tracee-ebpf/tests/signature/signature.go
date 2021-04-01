@@ -48,6 +48,7 @@ func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 			}
 		}
 	}
+	fmt.Println(res)
 	return res, nil
 }
 
@@ -56,7 +57,7 @@ func findGoSigs(dir string) ([]types.Signature, error) {
 	//if err != nil {
 	//	return nil, fmt.Errorf("error reading plugins directory %s: %v", dir, err)
 	//}
-	//var res []types.Signature
+	//var res [	]types.Signature
 	//for _, file := range files {
 	//	if filepath.Ext(file.Name()) != ".so" {
 	//		continue

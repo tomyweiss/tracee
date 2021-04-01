@@ -76,10 +76,7 @@ func setupTraceeGobInputSource(opts *TraceeInputOptions) (chan types.Event, erro
 func setupTraceeGoChannel(opts *TraceeInputOptions) (chan types.Event, error) {
 	res := make(chan types.Event)
 	go func() {
-		fmt.Println("Started listening on channel")
 		for e := range opts.ProducerChannel {
-			fmt.Println("Got a new message on channel")
-			fmt.Println(e)
 			res <- e
 		}
 		close(res)

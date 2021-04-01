@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"text/template"
 
 	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
@@ -31,40 +30,47 @@ type eventPrinter interface {
 func newEventPrinter(kind string, containerMode bool, out io.WriteCloser, err io.WriteCloser, producer chan external.Event) (eventPrinter, error) {
 	var res eventPrinter
 	var initError error
-	switch {
-	case kind == "table":
-		res = &tableEventPrinter{
-			out:             out,
-			err:             err,
-			verbose:         false,
-			containerMode:   containerMode,
-			producerChannel: producer,
-		}
-	case kind == "table-verbose":
-		res = &tableEventPrinter{
-			out:             out,
-			err:             err,
-			verbose:         true,
-			containerMode:   containerMode,
-			producerChannel: producer,
-		}
-	case kind == "json":
-		res = &jsonEventPrinter{
-			out: out,
-			err: err,
-		}
-	case kind == "gob":
-		res = &gobEventPrinter{
-			out: out,
-			err: err,
-		}
-	case strings.HasPrefix(kind, "gotemplate="):
-		res = &templateEventPrinter{
-			out:           out,
-			err:           err,
-			containerMode: containerMode,
-			templatePath:  strings.Split(kind, "=")[1],
-		}
+	//switch {
+	//case kind == "table":
+	//	res = &tableEventPrinter{
+	//		out:             out,
+	//		err:             err,
+	//		verbose:         false,
+	//		containerMode:   containerMode,
+	//		producerChannel: producer,
+	//	}
+	//case kind == "table-verbose":
+	//	res = &tableEventPrinter{
+	//		out:             out,
+	//		err:             err,
+	//		verbose:         true,
+	//		containerMode:   containerMode,
+	//		producerChannel: producer,
+	//	}
+	//case kind == "json":
+	//	res = &jsonEventPrinter{
+	//		out: out,
+	//		err: err,
+	//	}
+	//case kind == "gob":
+	//	res = &gobEventPrinter{
+	//		out: out,
+	//		err: err,
+	//	}
+	//case strings.HasPrefix(kind, "gotemplate="):
+	//	res = &templateEventPrinter{
+	//		out:           out,
+	//		err:           err,
+	//		containerMode: containerMode,
+	//		templatePath:  strings.Split(kind, "=")[1],
+	//	}
+	//}
+	res = &tableEventPrinter{
+		out:             out,
+		err:             err,
+		verbose:         true,
+		containerMode:   containerMode,
+		producerChannel: producer,
 	}
 	initError = res.Init()
 	if initError != nil {
@@ -115,53 +121,55 @@ type tableEventPrinter struct {
 func (p tableEventPrinter) Init() error { return nil }
 
 func (p tableEventPrinter) Preamble() {
-	if p.verbose {
-		if p.containerMode {
-			fmt.Fprintf(p.out, "%-14s %-16s %-12s %-12s %-6s %-16s %-15s %-15s %-15s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "MNT_NS", "PID_NS", "UID", "COMM", "PID/host", "TID/host", "PPID/host", "RET", "EVENT", "ARGS")
-		} else {
-			fmt.Fprintf(p.out, "%-14s %-16s %-12s %-12s %-6s %-16s %-7s %-7s %-7s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "MNT_NS", "PID_NS", "UID", "COMM", "PID", "TID", "PPID", "RET", "EVENT", "ARGS")
-		}
-	} else {
-		if p.containerMode {
-			fmt.Fprintf(p.out, "%-14s %-16s %-6s %-16s %-15s %-15s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "UID", "COMM", "PID/host", "TID/host", "RET", "EVENT", "ARGS")
-		} else {
-			fmt.Fprintf(p.out, "%-14s %-6s %-16s %-7s %-7s %-16s %-20s %s", "TIME(s)", "UID", "COMM", "PID", "TID", "RET", "EVENT", "ARGS")
-		}
-	}
-	fmt.Fprintln(p.out)
+	//if p.verbose {
+	//	if p.containerMode {
+	//		fmt.Fprintf(p.out, "%-14s %-16s %-12s %-12s %-6s %-16s %-15s %-15s %-15s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "MNT_NS", "PID_NS", "UID", "COMM", "PID/host", "TID/host", "PPID/host", "RET", "EVENT", "ARGS")
+	//	} else {
+	//		fmt.Fprintf(p.out, "%-14s %-16s %-12s %-12s %-6s %-16s %-7s %-7s %-7s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "MNT_NS", "PID_NS", "UID", "COMM", "PID", "TID", "PPID", "RET", "EVENT", "ARGS")
+	//	}
+	//} else {
+	//	if p.containerMode {
+	//		fmt.Fprintf(p.out, "%-14s %-16s %-6s %-16s %-15s %-15s %-16s %-20s %s", "TIME(s)", "UTS_NAME", "UID", "COMM", "PID/host", "TID/host", "RET", "EVENT", "ARGS")
+	//	} else {
+	//		fmt.Fprintf(p.out, "%-14s %-6s %-16s %-7s %-7s %-16s %-20s %s", "TIME(s)", "UID", "COMM", "PID", "TID", "RET", "EVENT", "ARGS")
+	//	}
+	//}
+	//fmt.Fprintln(p.out)
 }
 
 func (p tableEventPrinter) Print(event external.Event) {
+	//fmt.Println(p.producerChannel)
 	if p.producerChannel != nil {
+		//fmt.Println("send to tracee-rules channel")
 		p.producerChannel <- event
 		return
 	}
 
-	if p.verbose {
-		if p.containerMode {
-			fmt.Fprintf(p.out, "%-14f %-16s %-12d %-12d %-6d %-16s %-7d/%-7d %-7d/%-7d %-7d/%-7d %-16d %-20s ", event.Timestamp, event.HostName, event.MountNS, event.PIDNS, event.UserID, event.ProcessName, event.ProcessID, event.HostProcessID, event.ThreadID, event.HostThreadID, event.ParentProcessID, event.ParentProcessID, event.ReturnValue, event.EventName)
-		} else {
-			fmt.Fprintf(p.out, "%-14f %-16s %-12d %-12d %-6d %-16s %-7d %-7d %-7d %-16d %-20s ", event.Timestamp, event.HostName, event.MountNS, event.PIDNS, event.UserID, event.ProcessName, event.ProcessID, event.ThreadID, event.ParentProcessID, event.ReturnValue, event.EventName)
-		}
-	} else {
-		if p.containerMode {
-			fmt.Fprintf(p.out, "%-14f %-16s %-6d %-16s %-7d/%-7d %-7d/%-7d %-16d %-20s ", event.Timestamp, event.HostName, event.UserID, event.ProcessName, event.ProcessID, event.HostProcessID, event.ThreadID, event.HostThreadID, event.ReturnValue, event.EventName)
-		} else {
-			fmt.Fprintf(p.out, "%-14f %-6d %-16s %-7d %-7d %-16d %-20s ", event.Timestamp, event.UserID, event.ProcessName, event.ProcessID, event.ThreadID, event.ReturnValue, event.EventName)
-		}
-	}
-	for i, arg := range event.Args {
-		if i == 0 {
-			fmt.Fprintf(p.out, "%s: %v", arg.Name, arg.Value)
-		} else {
-			fmt.Fprintf(p.out, ", %s: %v", arg.Name, arg.Value)
-		}
-	}
-	fmt.Fprintln(p.out)
+	//if p.verbose {
+	//	if p.containerMode {
+	//		fmt.Fprintf(p.out, "%-14f %-16s %-12d %-12d %-6d %-16s %-7d/%-7d %-7d/%-7d %-7d/%-7d %-16d %-20s ", event.Timestamp, event.HostName, event.MountNS, event.PIDNS, event.UserID, event.ProcessName, event.ProcessID, event.HostProcessID, event.ThreadID, event.HostThreadID, event.ParentProcessID, event.ParentProcessID, event.ReturnValue, event.EventName)
+	//	} else {
+	//		fmt.Fprintf(p.out, "%-14f %-16s %-12d %-12d %-6d %-16s %-7d %-7d %-7d %-16d %-20s ", event.Timestamp, event.HostName, event.MountNS, event.PIDNS, event.UserID, event.ProcessName, event.ProcessID, event.ThreadID, event.ParentProcessID, event.ReturnValue, event.EventName)
+	//	}
+	//} else {
+	//	if p.containerMode {
+	//		fmt.Fprintf(p.out, "%-14f %-16s %-6d %-16s %-7d/%-7d %-7d/%-7d %-16d %-20s ", event.Timestamp, event.HostName, event.UserID, event.ProcessName, event.ProcessID, event.HostProcessID, event.ThreadID, event.HostThreadID, event.ReturnValue, event.EventName)
+	//	} else {
+	//		fmt.Fprintf(p.out, "%-14f %-6d %-16s %-7d %-7d %-16d %-20s ", event.Timestamp, event.UserID, event.ProcessName, event.ProcessID, event.ThreadID, event.ReturnValue, event.EventName)
+	//	}
+	//}
+	//for i, arg := range event.Args {
+	//	if i == 0 {
+	//		fmt.Fprintf(p.out, "%s: %v", arg.Name, arg.Value)
+	//	} else {
+	//		fmt.Fprintf(p.out, ", %s: %v", arg.Name, arg.Value)
+	//	}
+	//}
+	//fmt.Fprintln(p.out)
 }
 
 func (p tableEventPrinter) Error(err error) {
-	fmt.Fprintf(p.err, "%v\n", err)
+	//fmt.Fprintf(p.err, "%v\n", err)
 }
 
 func (p tableEventPrinter) Epilogue(stats statsStore) {

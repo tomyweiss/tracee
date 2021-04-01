@@ -57,6 +57,7 @@ func SetupOutput(w io.Writer, webhook string, webhookTemplate string, contentTyp
 
 	go func(w io.Writer, tWebhook, tOutput *template.Template) {
 		for res := range out {
+			fmt.Println("Got new message to out")
 			switch res.Context.(type) {
 			case tracee.Event:
 				if err := tOutput.Execute(w, res); err != nil {

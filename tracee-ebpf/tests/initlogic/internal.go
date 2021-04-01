@@ -24,6 +24,7 @@ func InitPackageMode() (chan external.Event, error) {
 		OutputTemplate:     "",
 	}
 
+	fmt.Println("InitPackageMode")
 	o, err := InitTraceeRules(inputData)
 	return o.ProducerChannel, err
 }
@@ -33,7 +34,7 @@ func InitTraceeRules(c model.Input) (input.TraceeInputOptions, error) {
 	if err != nil {
 		return input.TraceeInputOptions{}, err
 	}
-
+	fmt.Println("got")
 	var loadedSigIDs []string
 	for _, s := range sigs {
 		m, err := s.GetMetadata()
@@ -73,6 +74,7 @@ func InitTraceeRules(c model.Input) (input.TraceeInputOptions, error) {
 		return input.TraceeInputOptions{}, err
 	}
 	e := engine.NewEngine(sigs, inputs, output, os.Stderr)
+
 	e.Start(signature.SigHandler())
 	return *opts, nil
 }
