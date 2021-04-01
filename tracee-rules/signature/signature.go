@@ -1,7 +1,6 @@
 package signature
 
 import (
-	_ "embed"
 	"io"
 	"os/signal"
 	"syscall"
@@ -17,8 +16,7 @@ import (
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-//go:embed signatures/rego/helpers.rego
-var regoHelpersCode string
+var regoHelpersCode = "package tracee.helpers\n\nget_tracee_argument(arg_name) = res {\n    arg := input.args[_]\n    arg.name == arg_name\n    res := arg.value\n}\n\n\ndefault is_file_write(flags) = false\nis_file_write(flags) {\n    contains(lower(flags), \"o_wronly\")\n}\nis_file_write(flags) {\n    contains(lower(flags), \"o_rdwr\")\n}"
 
 func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 	if rulesDir == "" {
