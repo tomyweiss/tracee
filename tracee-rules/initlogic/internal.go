@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 	"github.com/aquasecurity/tracee/tracee-rules/engine"
 	"github.com/aquasecurity/tracee/tracee-rules/input"
 	"github.com/aquasecurity/tracee/tracee-rules/model"
@@ -12,7 +11,7 @@ import (
 	"github.com/aquasecurity/tracee/tracee-rules/signature"
 )
 
-func InitPackageMode() (chan external.Event, error) {
+func InitPackageMode() (chan interface{}, error) {
 	inputData := model.Input{
 		RulesDir:           "",
 		Rules:              nil,

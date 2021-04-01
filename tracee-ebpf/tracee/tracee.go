@@ -15,10 +15,11 @@ import (
 	"sync/atomic"
 	"syscall"
 
+	"github.com/aquasecurity/tracee/tracee-rules/initlogic"
+
 	bpf "github.com/aquasecurity/tracee/libbpfgo"
 	"github.com/aquasecurity/tracee/libbpfgo/helpers"
 	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
-	"github.com/aquasecurity/tracee/tracee-rules/initlogic"
 )
 
 // Config is a struct containing user defined configuration of tracee

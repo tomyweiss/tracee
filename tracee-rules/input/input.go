@@ -11,8 +11,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
-	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
@@ -30,7 +28,7 @@ const (
 type TraceeInputOptions struct {
 	inputFile       *os.File
 	inputFormat     inputFormat
-	ProducerChannel chan external.Event
+	ProducerChannel chan interface{}
 }
 
 func SetupTraceeInputSource(opts *TraceeInputOptions) (chan types.Event, error) {
@@ -55,7 +53,7 @@ func setupTraceeGobInputSource(opts *TraceeInputOptions) (chan types.Event, erro
 	res := make(chan types.Event)
 	go func() {
 		for {
-			var event tracee.Event
+			var event interface{}
 			err := dec.Decode(&event)
 			if err != nil {
 				if err == io.EOF {
@@ -90,7 +88,7 @@ func setupTraceeJSONInputSource(opts *TraceeInputOptions) (chan types.Event, err
 	go func() {
 		for scanner.Scan() {
 			event := scanner.Bytes()
-			var e tracee.Event
+			var e interface{}
 			err := json.Unmarshal(event, &e)
 			if err != nil {
 				log.Printf("invalid json in %s: %v", string(event), err)
@@ -136,7 +134,7 @@ func ParseTraceeInputOptions(inputOptions []string) (*TraceeInputOptions, error)
 				return nil, err
 			}
 		} else if kv[0] == "gochannel" {
-			inputSourceOptions.ProducerChannel = make(chan external.Event)
+			inputSourceOptions.ProducerChannel = make(chan interface{})
 			err = parseTraceeInputFormat(&inputSourceOptions, kv[1])
 			if err != nil {
 				return &inputSourceOptions, err
