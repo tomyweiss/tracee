@@ -196,7 +196,7 @@ type Tracee struct {
 	EncParamName      [2]map[string]argTag
 	pidsInMntns       bucketsCache //record the first n PIDs (host) in each mount namespace, for internal usage
 	StackAddressesMap *bpf.BPFMap
-	ProducerChannel   chan external.Event
+	ProducerChannel   chan interface{}
 }
 
 type counter int32

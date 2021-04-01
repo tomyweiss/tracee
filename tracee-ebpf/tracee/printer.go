@@ -28,7 +28,7 @@ type eventPrinter interface {
 	Close()
 }
 
-func newEventPrinter(kind string, containerMode bool, out io.WriteCloser, err io.WriteCloser, producer chan external.Event) (eventPrinter, error) {
+func newEventPrinter(kind string, containerMode bool, out io.WriteCloser, err io.WriteCloser, producer chan interface{}) (eventPrinter, error) {
 	var res eventPrinter
 	var initError error
 	switch {
@@ -109,7 +109,7 @@ type tableEventPrinter struct {
 	err             io.WriteCloser
 	verbose         bool
 	containerMode   bool
-	producerChannel chan external.Event
+	producerChannel chan interface{}
 }
 
 func (p tableEventPrinter) Init() error { return nil }

@@ -2,6 +2,8 @@ module github.com/aquasecurity/tracee/tracee-rules
 
 go 1.16
 
+replace github.com/aquasecurity/tracee/tracee-ebpf v0.0.0-20210401082657-44eaf56edcd1 => github.com/tomyweiss/tracee/tracee-ebpf v0.0.0-20210401121346-5435a3d5afa3
+
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
