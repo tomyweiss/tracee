@@ -291,8 +291,8 @@ github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2 h1:b6uOv7YOFK0TYG7HtkIgExQo+2RdLuwRft63jn2HWj8=
 github.com/syndtr/gocapability v0.0.0-20180916011248-d98352740cb2/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20170815181823-89b8d40f7ca8/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
-github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1 h1:fSBuUpPWnDNVewZbD/MiOSos+eXzRjRNrWycq8WLKd0=
-github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1/go.mod h1:BVb+BPxY7BYdUuKxtlindLHiyDXuILxuY1QSx8H2vDY=
+github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401085515-c2a4de5decd5 h1:X0DnLogjxygjNQBVcNDhbKRkkoIO0maaa1zHzI6HIE0=
+github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401085515-c2a4de5decd5/go.mod h1:BVb+BPxY7BYdUuKxtlindLHiyDXuILxuY1QSx8H2vDY=
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1 h1:+mkCCcOFKPnCmVYVcURKps1Xe+3zP90gSYGNfRkjoIY=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=

@@ -1,4 +1,4 @@
-package internal
+package initlogic
 
 import (
 	"fmt"

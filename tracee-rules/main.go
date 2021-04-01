@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/aquasecurity/tracee/tracee-rules/internal"
 	"github.com/aquasecurity/tracee/tracee-rules/model"
 	cli "github.com/urfave/cli/v2"
 )
@@ -46,7 +45,7 @@ func main() {
 				OutputTemplate:     c.String("output-template"),
 			}
 
-			_, err := internal.InitTraceeRules(inputData)
+			_, err := initlogic.InitTraceeRules(inputData)
 			return err
 		},
 		Flags: []cli.Flag{
