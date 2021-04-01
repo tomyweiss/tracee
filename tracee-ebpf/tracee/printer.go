@@ -28,23 +28,25 @@ type eventPrinter interface {
 	Close()
 }
 
-func newEventPrinter(kind string, containerMode bool, out io.WriteCloser, err io.WriteCloser) (eventPrinter, error) {
+func newEventPrinter(kind string, containerMode bool, out io.WriteCloser, err io.WriteCloser, producer chan external.Event) (eventPrinter, error) {
 	var res eventPrinter
 	var initError error
 	switch {
 	case kind == "table":
 		res = &tableEventPrinter{
-			out:           out,
-			err:           err,
-			verbose:       false,
-			containerMode: containerMode,
+			out:             out,
+			err:             err,
+			verbose:         false,
+			containerMode:   containerMode,
+			producerChannel: producer,
 		}
 	case kind == "table-verbose":
 		res = &tableEventPrinter{
-			out:           out,
-			err:           err,
-			verbose:       true,
-			containerMode: containerMode,
+			out:             out,
+			err:             err,
+			verbose:         true,
+			containerMode:   containerMode,
+			producerChannel: producer,
 		}
 	case kind == "json":
 		res = &jsonEventPrinter{
@@ -102,11 +104,12 @@ func newEvent(ctx context, argMetas []external.ArgMeta, args []interface{}, Stac
 }
 
 type tableEventPrinter struct {
-	tracee        *Tracee
-	out           io.WriteCloser
-	err           io.WriteCloser
-	verbose       bool
-	containerMode bool
+	tracee          *Tracee
+	out             io.WriteCloser
+	err             io.WriteCloser
+	verbose         bool
+	containerMode   bool
+	producerChannel chan external.Event
 }
 
 func (p tableEventPrinter) Init() error { return nil }
@@ -129,6 +132,11 @@ func (p tableEventPrinter) Preamble() {
 }
 
 func (p tableEventPrinter) Print(event external.Event) {
+	if p.producerChannel != nil {
+		p.producerChannel <- event
+		return
+	}
+
 	if p.verbose {
 		if p.containerMode {
 			fmt.Fprintf(p.out, "%-14f %-16s %-12d %-12d %-6d %-16s %-7d/%-7d %-7d/%-7d %-7d/%-7d %-16d %-20s ", event.Timestamp, event.HostName, event.MountNS, event.PIDNS, event.UserID, event.ProcessName, event.ProcessID, event.HostProcessID, event.ThreadID, event.HostThreadID, event.ParentProcessID, event.ParentProcessID, event.ReturnValue, event.EventName)

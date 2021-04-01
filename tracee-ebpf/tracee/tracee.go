@@ -18,7 +18,7 @@ import (
 	bpf "github.com/aquasecurity/tracee/libbpfgo"
 	"github.com/aquasecurity/tracee/libbpfgo/helpers"
 	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
-	initlogic "github.com/aquasecurity/tracee/tracee-rules/initlogic"
+	"github.com/aquasecurity/tracee/tracee-rules/initlogic"
 )
 
 // Config is a struct containing user defined configuration of tracee
@@ -270,9 +270,17 @@ func New(cfg Config) (*Tracee, error) {
 			return nil, err
 		}
 	}
+
+	c, err := initlogic.InitPackageMode()
+	if err != nil {
+		return nil, err
+	}
+
+	t.ProducerChannel = c
+
 	ContainerMode := (t.config.Filter.ContFilter.Enabled && t.config.Filter.ContFilter.Value) ||
 		(t.config.Filter.NewContFilter.Enabled && t.config.Filter.NewContFilter.Value)
-	printObj, err := newEventPrinter(t.config.Output.Format, ContainerMode, outf, errf)
+	printObj, err := newEventPrinter(t.config.Output.Format, ContainerMode, outf, errf, t.ProducerChannel)
 	if err != nil {
 		return nil, err
 	}
@@ -340,12 +348,6 @@ func New(cfg Config) (*Tracee, error) {
 	}
 	t.StackAddressesMap = StackAddressesMap
 
-	c, err := initlogic.InitPackageMode()
-	if err != nil {
-		return nil, err
-	}
-
-	t.ProducerChannel = c
 	return t, nil
 }
 

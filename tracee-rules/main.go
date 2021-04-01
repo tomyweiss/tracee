@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/aquasecurity/tracee/tracee-rules/initlogic"
 	"github.com/aquasecurity/tracee/tracee-rules/model"
 	cli "github.com/urfave/cli/v2"
 )

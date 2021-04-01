@@ -2,7 +2,7 @@ module github.com/aquasecurity/tracee/tracee-ebpf
 
 go 1.16
 
-replace github.com/aquasecurity/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1 => github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401085515-c2a4de5decd5
+replace github.com/aquasecurity/tracee/tracee-rules v0.0.0-20210401082657-44eaf56edcd1 => github.com/tomyweiss/tracee/tracee-rules v0.0.0-20210401090828-dc29e1f69c1b
 
 require (
 	github.com/aquasecurity/tracee/libbpfgo v0.0.0-20210318031738-f66f7bedda26
