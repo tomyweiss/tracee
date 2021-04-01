@@ -1,4 +1,4 @@
-package main
+package input
 
 import (
 	"bufio"
@@ -11,11 +11,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-var errHelp = errors.New("user has requested help text")
+var ErrHelp = errors.New("user has requested help text")
 
 type inputFormat uint8
 
@@ -23,14 +24,16 @@ const (
 	invalidInputFormat inputFormat = iota
 	jsonInputFormat
 	gobInputFormat
+	goChannel
 )
 
-type traceeInputOptions struct {
-	inputFile   *os.File
-	inputFormat inputFormat
+type TraceeInputOptions struct {
+	inputFile       *os.File
+	inputFormat     inputFormat
+	ProducerChannel chan external.Event
 }
 
-func setupTraceeInputSource(opts *traceeInputOptions) (chan types.Event, error) {
+func SetupTraceeInputSource(opts *TraceeInputOptions) (chan types.Event, error) {
 
 	if opts.inputFormat == jsonInputFormat {
 		return setupTraceeJSONInputSource(opts)
@@ -40,10 +43,14 @@ func setupTraceeInputSource(opts *traceeInputOptions) (chan types.Event, error) 
 		return setupTraceeGobInputSource(opts)
 	}
 
-	return nil, errors.New("could not set up input source")
+	if opts.inputFormat == goChannel {
+		return setupTraceeGoChannel(opts)
+	}
+
+	return nil, errors.New("could not set up producerChannel source")
 }
 
-func setupTraceeGobInputSource(opts *traceeInputOptions) (chan types.Event, error) {
+func setupTraceeGobInputSource(opts *TraceeInputOptions) (chan types.Event, error) {
 	dec := gob.NewDecoder(opts.inputFile)
 	res := make(chan types.Event)
 	go func() {
@@ -66,7 +73,18 @@ func setupTraceeGobInputSource(opts *traceeInputOptions) (chan types.Event, erro
 	return res, nil
 }
 
-func setupTraceeJSONInputSource(opts *traceeInputOptions) (chan types.Event, error) {
+func setupTraceeGoChannel(opts *TraceeInputOptions) (chan types.Event, error) {
+	res := make(chan types.Event)
+	go func() {
+		for e := range opts.ProducerChannel {
+			res <- e
+		}
+		close(res)
+	}()
+	return res, nil
+}
+
+func setupTraceeJSONInputSource(opts *TraceeInputOptions) (chan types.Event, error) {
 	res := make(chan types.Event)
 	scanner := bufio.NewScanner(opts.inputFile)
 	go func() {
@@ -85,25 +103,24 @@ func setupTraceeJSONInputSource(opts *traceeInputOptions) (chan types.Event, err
 	return res, nil
 }
 
-func parseTraceeInputOptions(inputOptions []string) (*traceeInputOptions, error) {
-
+func ParseTraceeInputOptions(inputOptions []string) (*TraceeInputOptions, error) {
 	var (
-		inputSourceOptions traceeInputOptions
+		inputSourceOptions TraceeInputOptions
 		err                error
 	)
 
 	if len(inputOptions) == 0 {
-		return nil, errors.New("no tracee input options specified")
+		return nil, errors.New("no tracee producerChannel options specified")
 	}
 
 	for i := range inputOptions {
 		if inputOptions[i] == "help" {
-			return nil, errHelp
+			return nil, ErrHelp
 		}
 
 		kv := strings.Split(inputOptions[i], ":")
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("invalid input-tracee option: %s", inputOptions[i])
+			return nil, fmt.Errorf("invalid producerChannel-tracee option: %s", inputOptions[i])
 		}
 		if kv[0] == "" || kv[1] == "" {
 			return nil, fmt.Errorf("empty key or value passed: key: >%s< value: >%s<", kv[0], kv[1])
@@ -118,14 +135,20 @@ func parseTraceeInputOptions(inputOptions []string) (*traceeInputOptions, error)
 			if err != nil {
 				return nil, err
 			}
+		} else if kv[0] == "gochannel" {
+			inputSourceOptions.ProducerChannel = make(chan external.Event)
+			err = parseTraceeInputFormat(&inputSourceOptions, kv[1])
+			if err != nil {
+				return &inputSourceOptions, err
+			}
 		} else {
-			return nil, fmt.Errorf("invalid input-tracee option key: %s", kv[0])
+			return nil, fmt.Errorf("invalid producerChannel-tracee option key: %s", kv[0])
 		}
 	}
 	return &inputSourceOptions, nil
 }
 
-func parseTraceeInputFile(option *traceeInputOptions, fileOpt string) error {
+func parseTraceeInputFile(option *TraceeInputOptions, fileOpt string) error {
 
 	if fileOpt == "stdin" {
 		option.inputFile = os.Stdin
@@ -133,7 +156,7 @@ func parseTraceeInputFile(option *traceeInputOptions, fileOpt string) error {
 	}
 	_, err := os.Stat(fileOpt)
 	if err != nil {
-		return fmt.Errorf("invalid Tracee input file: %s", fileOpt)
+		return fmt.Errorf("invalid Tracee producerChannel file: %s", fileOpt)
 	}
 	f, err := os.Open(fileOpt)
 	if err != nil {
@@ -143,34 +166,36 @@ func parseTraceeInputFile(option *traceeInputOptions, fileOpt string) error {
 	return nil
 }
 
-func parseTraceeInputFormat(option *traceeInputOptions, formatString string) error {
+func parseTraceeInputFormat(option *TraceeInputOptions, formatString string) error {
 	formatString = strings.ToUpper(formatString)
 
 	if formatString == "JSON" {
 		option.inputFormat = jsonInputFormat
 	} else if formatString == "GOB" {
 		option.inputFormat = gobInputFormat
+	} else if formatString == "goChannel" {
+		option.inputFormat = goChannel
 	} else {
 		option.inputFormat = invalidInputFormat
-		return fmt.Errorf("invalid tracee input format specified: %s", formatString)
+		return fmt.Errorf("invalid tracee producerChannel format specified: %s", formatString)
 	}
 	return nil
 }
 
-func printHelp() {
+func PrintHelp() {
 	traceeInputHelp := `
-tracee-rules --input-tracee <key:value>,<key:value> --input-tracee <key:value>
+tracee-rules --producerChannel-tracee <key:value>,<key:value> --producerChannel-tracee <key:value>
 
-Specify various key value pairs for input options tracee-ebpf. The following key options are available:
+Specify various key value pairs for producerChannel options tracee-ebpf. The following key options are available:
 
-'file'   - Input file source. You can specify a relative or absolute path. You may also specify 'stdin' for standard input.
+'file'   - Input file source. You can specify a relative or absolute path. You may also specify 'stdin' for standard producerChannel.
 'format' - Input format. Options currently include 'JSON' and 'GOB'. Both can be specified as output formats from tracee-ebpf.
 
 Examples:
 
-'tracee-rules --input-tracee file:./events.json --input-tracee format:json'
-'tracee-rules --input-tracee file:./events.gob --input-tracee format:gob'
-'sudo tracee-ebpf -o format:gob | tracee-rules --input-tracee file:stdin --input-tracee format:gob'
+'tracee-rules --producerChannel-tracee file:./events.json --producerChannel-tracee format:json'
+'tracee-rules --producerChannel-tracee file:./events.gob --producerChannel-tracee format:gob'
+'sudo tracee-ebpf -o format:gob | tracee-rules --producerChannel-tracee file:stdin --producerChannel-tracee format:gob'
 `
 
 	fmt.Println(traceeInputHelp)

@@ -1,7 +1,10 @@
-package main
+package signature
 
 import (
 	_ "embed"
+	"io"
+	"os/signal"
+	"syscall"
 
 	"fmt"
 	"io/ioutil"
@@ -17,7 +20,7 @@ import (
 //go:embed signatures/rego/helpers.rego
 var regoHelpersCode string
 
-func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
+func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 	if rulesDir == "" {
 		exePath, err := os.Executable()
 		if err != nil {
@@ -103,4 +106,27 @@ func findRegoSigs(dir string) ([]types.Signature, error) {
 		res = append(res, sig)
 	}
 	return res, nil
+}
+
+func ListSigs(w io.Writer, sigs []types.Signature) error {
+	fmt.Fprintf(w, "%-10s %-35s %s %s\n", "ID", "NAME", "VERSION", "DESCRIPTION")
+	for _, sig := range sigs {
+		meta, err := sig.GetMetadata()
+		if err != nil {
+			continue
+		}
+		fmt.Fprintf(w, "%-10s %-35s %-7s %s\n", meta.ID, meta.Name, meta.Version, meta.Description)
+	}
+	return nil
+}
+
+func SigHandler() chan bool {
+	sigs := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		done <- true
+	}()
+	return done
 }

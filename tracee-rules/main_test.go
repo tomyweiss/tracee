@@ -11,7 +11,7 @@ import (
 )
 
 func Test_listSigs(t *testing.T) {
-	fakeSigs := []fakeSignature{
+	fakeSigs := []output.fakeSignature{
 		{
 			getMetadata: func() (types.SignatureMetadata, error) {
 				return types.SignatureMetadata{

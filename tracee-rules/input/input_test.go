@@ -1,4 +1,4 @@
-package main
+package input
 
 import (
 	"encoding/gob"
@@ -18,26 +18,26 @@ func TestParseTraceeInputOptions(t *testing.T) {
 	testCases := []struct {
 		testName              string
 		optionStringSlice     []string
-		expectedResultOptions *traceeInputOptions
+		expectedResultOptions *TraceeInputOptions
 		expectedError         error
 	}{
 		{
 			testName:              "no options specified",
 			optionStringSlice:     []string{},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("no tracee input options specified"),
+			expectedError:         errors.New("no tracee producerChannel options specified"),
 		},
 		{
 			testName:              "non-existent file specified",
 			optionStringSlice:     []string{"file:/iabxfdoabs22do2b"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid Tracee input file: /iabxfdoabs22do2b"),
+			expectedError:         errors.New("invalid Tracee producerChannel file: /iabxfdoabs22do2b"),
 		},
 		{
 			testName:              "non-existent file specified",
 			optionStringSlice:     []string{"file:/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid Tracee input file: /AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+			expectedError:         errors.New("invalid Tracee producerChannel file: /AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
 		},
 		{
 			testName:              "non-existent file specified",
@@ -49,43 +49,43 @@ func TestParseTraceeInputOptions(t *testing.T) {
 			testName:              "invalid file format specified",
 			optionStringSlice:     []string{"format:xml"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid tracee input format specified: XML"),
+			expectedError:         errors.New("invalid tracee producerChannel format specified: XML"),
 		},
 		{
-			testName:              "invalid input option specified",
+			testName:              "invalid producerChannel option specified",
 			optionStringSlice:     []string{"shmoo:hallo"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid input-tracee option key: shmoo"),
+			expectedError:         errors.New("invalid producerChannel-tracee option key: shmoo"),
 		},
 		{
-			testName:              "invalid input option specified",
+			testName:              "invalid producerChannel option specified",
 			optionStringSlice:     []string{":"},
 			expectedResultOptions: nil,
 			expectedError:         errors.New("empty key or value passed: key: >< value: ><"),
 		},
 		{
-			testName:              "invalid input option specified",
+			testName:              "invalid producerChannel option specified",
 			optionStringSlice:     []string{"A"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid input-tracee option: A"),
+			expectedError:         errors.New("invalid producerChannel-tracee option: A"),
 		},
 		{
-			testName:              "invalid input option specified",
+			testName:              "invalid producerChannel option specified",
 			optionStringSlice:     []string{"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid input-tracee option: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+			expectedError:         errors.New("invalid producerChannel-tracee option: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
 		},
 		{
-			testName:              "invalid input option specified",
+			testName:              "invalid producerChannel option specified",
 			optionStringSlice:     []string{"3O$B@4420**@!;;;go.fmt@!3h;^!#!@841083n1"},
 			expectedResultOptions: nil,
-			expectedError:         errors.New("invalid input-tracee option: 3O$B@4420**@!;;;go.fmt@!3h;^!#!@841083n1"),
+			expectedError:         errors.New("invalid producerChannel-tracee option: 3O$B@4420**@!;;;go.fmt@!3h;^!#!@841083n1"),
 		},
 	}
 
 	for _, testcase := range testCases {
 		t.Run(testcase.testName, func(t *testing.T) {
-			opt, err := parseTraceeInputOptions(testcase.optionStringSlice)
+			opt, err := ParseTraceeInputOptions(testcase.optionStringSlice)
 			assert.Equal(t, testcase.expectedError, err)
 			assert.Equal(t, testcase.expectedResultOptions, opt)
 		})
@@ -150,7 +150,7 @@ func TestSetupTraceeJSONInputSource(t *testing.T) {
 			}
 
 			// Set up reading from the file
-			opts := &traceeInputOptions{inputFile: f, inputFormat: jsonInputFormat}
+			opts := &TraceeInputOptions{inputFile: f, inputFormat: jsonInputFormat}
 			eventsChan, err := setupTraceeJSONInputSource(opts)
 			assert.Equal(t, testCase.expectedError, err)
 
@@ -241,7 +241,7 @@ func TestSetupTraceeGobInputSource(t *testing.T) {
 			f.Seek(0, io.SeekStart)
 
 			// Set up reading from the file
-			opts := &traceeInputOptions{inputFile: f, inputFormat: gobInputFormat}
+			opts := &TraceeInputOptions{inputFile: f, inputFormat: gobInputFormat}
 			eventsChan, err := setupTraceeGobInputSource(opts)
 			assert.Equal(t, testCase.expectedError, err)
 

@@ -1,4 +1,4 @@
-package main
+package output
 
 import (
 	"bytes"
@@ -75,7 +75,7 @@ HostName: foobar.local
 			name: "sad path with unknown context",
 			inputContext: struct {
 				foo string
-			}{foo: "bad input context"},
+			}{foo: "bad producerChannel context"},
 			expectedOutput: ``,
 		},
 		{
@@ -90,7 +90,7 @@ HostName: foobar.local
 
 	for _, tc := range testCases {
 		var actualOutput bytes.Buffer
-		findingCh, err := setupOutput(&actualOutput, "", "", "", tc.outputFormat)
+		findingCh, err := SetupOutput(&actualOutput, "", "", "", tc.outputFormat)
 		require.NoError(t, err, tc.name)
 
 		sm, _ := fakeSignature{}.GetMetadata()

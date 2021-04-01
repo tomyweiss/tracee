@@ -1,4 +1,4 @@
-package main
+package signature
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 )
 
 func Test_getSignatures(t *testing.T) {
-	sigs, err := getSignatures("signatures/rego", []string{"TRC-2"})
+	sigs, err := GetSignatures("signatures/rego", []string{"TRC-2"})
 	require.NoError(t, err)
 	require.Equal(t, 1, len(sigs))
 

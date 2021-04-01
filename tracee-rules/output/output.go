@@ -1,4 +1,4 @@
-package main
+package output
 
 import (
 	"bytes"
@@ -39,7 +39,7 @@ func setupTemplate(inputTemplateFile string) (*template.Template, error) {
 	}
 }
 
-func setupOutput(w io.Writer, webhook string, webhookTemplate string, contentType string, outputTemplate string) (chan types.Finding, error) {
+func SetupOutput(w io.Writer, webhook string, webhookTemplate string, contentType string, outputTemplate string) (chan types.Finding, error) {
 	out := make(chan types.Finding)
 	var err error
 
