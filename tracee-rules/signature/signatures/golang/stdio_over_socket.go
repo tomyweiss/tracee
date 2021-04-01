@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
-	"github.com/aquasecurity/tracee/tracee-rules/signatures/helpers"
+	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/helpers"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 

@@ -1,10 +1,11 @@
 package main
 
 import (
-	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
 	"testing"
 
-	"github.com/aquasecurity/tracee/tracee-rules/signatures/signaturestest"
+	tracee "github.com/aquasecurity/tracee/tracee-ebpf/tracee/external"
+
+	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/signaturestest"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 

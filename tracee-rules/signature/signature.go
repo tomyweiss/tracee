@@ -13,11 +13,11 @@ import (
 	"path/filepath"
 	"plugin"
 
-	"github.com/aquasecurity/tracee/tracee-rules/signatures/rego/regosig"
+	"github.com/aquasecurity/tracee/tracee-rules/signature/signatures/rego/regosig"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-//go:embed ../signatures/rego/helpers.rego
+//go:embed signatures/rego/helpers.rego
 var regoHelpersCode string
 
 func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
