@@ -135,10 +135,15 @@ func (sig *RegoSignature) getSelectedEvents(pkgName string) ([]types.SignatureEv
 func (sig *RegoSignature) OnEvent(e types.Event) error {
 
 	ee, ok := e.(tracee.Event)
+	sig.cb(types.Finding{
+		Data:        nil,
+		Context:     ee,
+		SigMetadata: sig.metadata,
+	})
 	if !ok {
 		return fmt.Errorf("invalid event")
 	}
-	fmt.Println(ee)
+	//fmt.Println(ee)
 	results, err := sig.matchPQ.Eval(context.TODO(), rego.EvalInput(ee))
 	if err != nil {
 		return err

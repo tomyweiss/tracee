@@ -48,7 +48,7 @@ func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 			}
 		}
 	}
-	fmt.Println(res)
+	//fmt.Println(res)
 	return res, nil
 }
 
