@@ -5,10 +5,28 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/aquasecurity/tracee/tracee-rules/logic"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
+
+type fakeSignature struct {
+	types.Signature
+	getMetadata func() (types.SignatureMetadata, error)
+}
+
+func (f fakeSignature) GetMetadata() (types.SignatureMetadata, error) {
+	if f.getMetadata != nil {
+		return f.getMetadata()
+	}
+
+	return types.SignatureMetadata{
+		ID:          "FOO-666",
+		Name:        "foo bar signature",
+		Description: "the most evil",
+	}, nil
+}
 
 func Test_listSigs(t *testing.T) {
 	fakeSigs := []fakeSignature{
@@ -45,7 +63,7 @@ func Test_listSigs(t *testing.T) {
 	}
 
 	buf := bytes.Buffer{}
-	assert.NoError(t, listSigs(&buf, inputSigs))
+	assert.NoError(t, logic.ListSigs(&buf, inputSigs))
 	assert.Equal(t, `ID         NAME                                VERSION DESCRIPTION
 FOO-1      foo signature                       1.2.3   foo signature helps with foo
 BAR-1      bar signature                       4.5.6   bar signature helps with bar
