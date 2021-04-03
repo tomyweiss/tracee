@@ -1,4 +1,4 @@
-package main
+package signatures
 
 import (
 	_ "embed"
@@ -14,10 +14,10 @@ import (
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-//go:embed signatures/rego/helpers.rego
+//go:embed rego/helpers.rego
 var regoHelpersCode string
 
-func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
+func GetSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 	if rulesDir == "" {
 		exePath, err := os.Executable()
 		if err != nil {
@@ -25,7 +25,7 @@ func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 		}
 		rulesDir = filepath.Join(filepath.Dir(exePath), "rules")
 	}
-	gosigs, err := findGoSigs(rulesDir)
+	gosigs, err := FindGoSigs(rulesDir)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func getSignatures(rulesDir string, rules []string) ([]types.Signature, error) {
 	return res, nil
 }
 
-func findGoSigs(dir string) ([]types.Signature, error) {
+func FindGoSigs(dir string) ([]types.Signature, error) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		return nil, fmt.Errorf("error reading plugins directory %s: %v", dir, err)

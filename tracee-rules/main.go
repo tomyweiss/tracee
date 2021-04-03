@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/aquasecurity/tracee/tracee-rules/input"
+	"github.com/aquasecurity/tracee/tracee-rules/output"
+	"github.com/aquasecurity/tracee/tracee-rules/signatures"
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 
 	"github.com/aquasecurity/tracee/tracee-rules/engine"
@@ -38,7 +41,7 @@ func main() {
 				return errors.New("no flags specified")
 			}
 
-			sigs, err := getSignatures(c.String("rules-dir"), c.StringSlice("rules"))
+			sigs, err := signatures.GetSignatures(c.String("rules-dir"), c.StringSlice("rules"))
 			if err != nil {
 				return err
 			}
@@ -58,15 +61,15 @@ func main() {
 			}
 
 			var inputs engine.EventSources
-			opts, err := parseTraceeInputOptions(c.StringSlice("input-tracee"))
-			if err == errHelp {
-				printHelp()
+			opts, err := input.ParseTraceeInputOptions(c.StringSlice("input-tracee"))
+			if err == input.ErrHelp {
+				input.PrintHelp()
 				return nil
 			}
 			if err != nil {
 				return err
 			}
-			inputs.Tracee, err = setupTraceeInputSource(opts)
+			inputs.Tracee, err = input.SetupTraceeInputSource(opts)
 			if err != nil {
 				return err
 			}
@@ -75,11 +78,11 @@ func main() {
 				return err
 			}
 
-			output, err := setupOutput(os.Stdout, c.String("webhook"), c.String("webhook-template"), c.String("webhook-content-type"), c.String("output-template"))
+			o, err := output.SetupOutput(os.Stdout, c.String("webhook"), c.String("webhook-template"), c.String("webhook-content-type"), c.String("output-template"))
 			if err != nil {
 				return err
 			}
-			e := engine.NewEngine(sigs, inputs, output, os.Stderr)
+			e := engine.NewEngine(sigs, inputs, o, os.Stderr)
 			e.Start(sigHandler())
 			return nil
 		},

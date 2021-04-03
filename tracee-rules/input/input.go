@@ -1,4 +1,4 @@
-package main
+package input
 
 import (
 	"bufio"
@@ -15,7 +15,7 @@ import (
 	"github.com/aquasecurity/tracee/tracee-rules/types"
 )
 
-var errHelp = errors.New("user has requested help text")
+var ErrHelp = errors.New("user has requested help text")
 
 type inputFormat uint8
 
@@ -30,7 +30,7 @@ type traceeInputOptions struct {
 	inputFormat inputFormat
 }
 
-func setupTraceeInputSource(opts *traceeInputOptions) (chan types.Event, error) {
+func SetupTraceeInputSource(opts *traceeInputOptions) (chan types.Event, error) {
 
 	if opts.inputFormat == jsonInputFormat {
 		return setupTraceeJSONInputSource(opts)
@@ -85,7 +85,7 @@ func setupTraceeJSONInputSource(opts *traceeInputOptions) (chan types.Event, err
 	return res, nil
 }
 
-func parseTraceeInputOptions(inputOptions []string) (*traceeInputOptions, error) {
+func ParseTraceeInputOptions(inputOptions []string) (*traceeInputOptions, error) {
 
 	var (
 		inputSourceOptions traceeInputOptions
@@ -98,7 +98,7 @@ func parseTraceeInputOptions(inputOptions []string) (*traceeInputOptions, error)
 
 	for i := range inputOptions {
 		if inputOptions[i] == "help" {
-			return nil, errHelp
+			return nil, ErrHelp
 		}
 
 		kv := strings.Split(inputOptions[i], ":")
@@ -157,7 +157,7 @@ func parseTraceeInputFormat(option *traceeInputOptions, formatString string) err
 	return nil
 }
 
-func printHelp() {
+func PrintHelp() {
 	traceeInputHelp := `
 tracee-rules --input-tracee <key:value>,<key:value> --input-tracee <key:value>
 
