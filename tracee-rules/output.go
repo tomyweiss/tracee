@@ -2,11 +2,14 @@ package main
 
 import (
 	"bytes"
+	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -59,8 +62,20 @@ func setupOutput(w io.Writer, webhook string, webhookTemplate string, contentTyp
 		for res := range out {
 			switch res.Context.(type) {
 			case tracee.Event:
-				if err := tOutput.Execute(w, res); err != nil {
-					log.Println("error writing to output: ", err)
+				serializedObject, err := json.Marshal(res)
+				if err != nil {
+					log.Printf("Error when trying to parse tracee event: %v\n", err)
+					continue
+				}
+
+				bs := make([]byte, 4)
+				binary.LittleEndian.PutUint32(bs, uint32(len(serializedObject)))
+
+				// ensure data is in the same buffer (instead of writing performing consecutive writes)
+				data := bytes.Join([][]byte{bs, serializedObject}, []byte(""))
+				err = binary.Write(os.Stdout, binary.LittleEndian, data)
+				if err != nil {
+					log.Printf("Error when trying to write event: %v\n", err)
 				}
 			default:
 				log.Printf("unsupported event detected: %T\n", res.Context)
